@@ -1,0 +1,47 @@
+<ion-content [fullscreen]="true" class="login-container">
+  <div class="bg-container"></div>
+
+  <ion-title class="pt-10 pl-5">
+    <h1 class="text-2xl pb-2">Bienvenido!!</h1>
+    <p class="text-lg">Ingresa tu correo y contraseña</p>
+  </ion-title>
+
+  <!-- form content -->
+
+  <div class="login-content">
+    <form [formGroup]="loginForm" (ngSubmit)="login()" class="form-container">
+      <ion-item class="mb-5 text-lg input-content">
+        <ion-input
+          label="Correo"
+          labelPlacement="floating"
+          type="email"
+          formControlName="email"
+          class="form-input"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item class="mb-5 text-lg input-content">
+        <ion-input
+          label="Contraseña"
+          labelPlacement="floating"
+          type="password"
+          formControlName="password"
+        ></ion-input>
+      </ion-item>
+
+      <ion-button
+        type="submit"
+        shape="round"
+        color="main"
+        [disabled]="!loginForm.valid"
+        class="btn-login text-2xl"
+        >Ingresar</ion-button
+      >
+    </form>
+
+    <div class="text-center flex flex-col pt-8 underline gap-y-3">
+      <a class="text-lg">¿Olvidaste tu contraseña?</a>
+      <a class="text-lg">Crear una nueva cuenta</a>
+    </div>
+  </div>
+</ion-content>
