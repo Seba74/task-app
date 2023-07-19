@@ -1,0 +1,78 @@
+<ion-content [fullscreen]="true">
+  <ion-toolbar>
+    <ion-back-button slot="start" defaultHref="/login"></ion-back-button>
+  </ion-toolbar>
+
+  <div class="bg-container"></div>
+
+  <ion-title class="pt-2 pl-5">
+    <h2 class="text-lg">Crea una cuenta!</h2>
+  </ion-title>
+
+  <div class="register-content">
+    <form [formGroup]="registerForm" (ngSubmit)="register()" class="form-container">
+      <ion-item class="mb-5 text-lg input-content">
+        <ion-input
+          label="Nombre"
+          labelPlacement="floating"
+          type="text"
+          formControlName="name"
+          class="form-input"
+        ></ion-input>
+      </ion-item>
+      <ion-item class="mb-5 text-lg input-content">
+        <ion-input
+          label="Apellido"
+          labelPlacement="floating"
+          type="text"
+          formControlName="surname"
+          class="form-input"
+        ></ion-input>
+      </ion-item>
+      <ion-item class="mb-5 text-lg input-content">
+        <ion-input
+          label="Usuario"
+          labelPlacement="floating"
+          type="text"
+          formControlName="username"
+          class="form-input"
+        ></ion-input>
+      </ion-item>
+      <ion-item class="mb-5 text-lg input-content">
+        <ion-input
+          label="Correo"
+          labelPlacement="floating"
+          type="email"
+          formControlName="email"
+          class="form-input"
+        ></ion-input>
+      </ion-item>
+      <ion-item class="mb-5 text-lg input-content">
+        <ion-input
+          label="Contraseña"
+          labelPlacement="floating"
+          type="password"
+          formControlName="password"
+        ></ion-input>
+      </ion-item>
+      <ion-item class="mb-5 text-lg input-content">
+        <ion-input
+          label="Repetir contraseña"
+          labelPlacement="floating"
+          type="password"
+          formControlName="password2"
+        ></ion-input>
+      </ion-item>
+
+      <ion-button
+        type="submit"
+        shape="round"
+        color="main"
+        [disabled]="!registerForm.valid"
+        class="btn-login text-2xl"
+        >Registrarse</ion-button
+      >
+    </form>
+  </div>
+
+</ion-content>
