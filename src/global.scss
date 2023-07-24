@@ -24,6 +24,9 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+
+@import "../node_modules/angular-calendar/css/angular-calendar.css";
+
 @import "./styles/var.scss";
 
 /* Talwind CSS */
@@ -36,4 +39,13 @@
 /* Global SCSS */
 * {
     font-family: $main-font;
+}
+
+ion-loading.custom-loading {
+    --spinner-color: var(--ion-background-color);
+    transform: scale(1.4);
+    .loading-wrapper {
+        background: transparent;
+        color: var(--ion-background-color);
+    }
 }

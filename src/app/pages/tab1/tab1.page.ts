@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { Component, inject } from '@angular/core';
+import { IonicModule, NavController } from '@ionic/angular';
+import { AuthService } from 'src/app/auth/services/auth.service';
 
 @Component({
   selector: 'app-tab1',
@@ -9,5 +10,9 @@ import { IonicModule } from '@ionic/angular';
   imports: [IonicModule],
 })
 export class Tab1Page {
-  constructor() {}
+  private authService = inject(AuthService);
+
+  logout() {
+    this.authService.logout().subscribe();
+  }
 }

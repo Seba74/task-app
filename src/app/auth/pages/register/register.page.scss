@@ -1,23 +1,21 @@
-.login-container {
-    .bg-container {
-        background-image: url("../../../assets/background/bg-login.svg");
-        background-size: cover;
-        background-position: stretch;
-        background-repeat: no-repeat;
-        height: 70vh;
-        width: 100%;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        z-index: -1;
-    }
+.bg-container {
+    background-image: url("../../../../assets/background/bg-register.svg");
+    background-size: cover;
+    background-position: stretch;
+    background-repeat: no-repeat;
+    height: 600px;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
 }
 
-.login-content {
+.register-content {
     width: 100%;
     display: flex;
     flex-direction: column;
-    padding-top: 12rem;
+    padding-top: 4rem;
     .form-container {
         width: 100%;
         display: flex;
@@ -28,7 +26,7 @@
             display: flex;
             align-self: center;
             width: max-content;
-            margin-top: 8rem;
+            margin-top: 4rem;
             --padding-bottom: 1.5rem;
             --padding-top: 1.5rem;
             --padding-start: 3rem;
@@ -43,4 +41,9 @@ ion-item {
     ion-input {
         --highlight-color: var(--ion-color-main);
     }
+}
+
+.toast-error {
+    --background: var(--ion-color-danger-tint);
+    --color: var(--ion-color-danger-contrast);
 }

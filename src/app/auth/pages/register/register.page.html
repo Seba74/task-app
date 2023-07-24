@@ -10,7 +10,11 @@
   </ion-title>
 
   <div class="register-content">
-    <form [formGroup]="registerForm" (ngSubmit)="register()" class="form-container">
+    <form
+      [formGroup]="registerForm"
+      (ngSubmit)="register()"
+      class="form-container"
+    >
       <ion-item class="mb-5 text-lg input-content">
         <ion-input
           label="Nombre"
@@ -75,4 +79,14 @@
     </form>
   </div>
 
+  <ion-toast
+    [isOpen]="isToastOpen"
+    [message]="error"
+    [duration]="2000"
+    [cssClass]="'toast-error'"
+    [icon]="'close-circle-outline'"
+    [position]="'top'"
+    [mode]="'ios'"
+    (didDismiss)="setOpen(false)"
+  ></ion-toast>
 </ion-content>

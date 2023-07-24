@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
@@ -10,8 +10,9 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, NavController } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -27,6 +28,12 @@ import { RouterLink } from '@angular/router';
   ],
 })
 export class RegisterPage implements OnInit {
+  private readonly navController = inject(NavController);
+  private authService = inject(AuthService);
+
+  isToastOpen: boolean = false;
+  error: string = '';
+
   checkPasswords: ValidatorFn = (
     control: AbstractControl
   ): ValidationErrors | null => {
@@ -57,8 +64,6 @@ export class RegisterPage implements OnInit {
     [this.checkPasswords]
   );
 
-  constructor() {}
-
   ngOnInit() {}
 
   register() {
@@ -67,6 +72,25 @@ export class RegisterPage implements OnInit {
       return;
     }
     this.registerForm.removeControl('password2');
-    console.log(JSON.stringify(this.registerForm.value));
+    const { name, surname, username, email, password } =
+      this.registerForm.value;
+    this.authService
+      .register(name, surname, username, email, password)
+      .subscribe({
+        next: () => {
+          this.navController.navigateRoot('/home');
+        },
+        error: (err) => {
+          this.error = err;
+          console.log(err);
+          if (!this.isToastOpen) {
+            this.setOpen(true);
+          }
+        },
+      });
+  }
+
+  setOpen(isOpen: boolean) {
+    this.isToastOpen = isOpen;
   }
 }
