@@ -1,0 +1,66 @@
+<form [formGroup]="addTaskForm" (ngSubmit)="addTask()" class="form-container">
+  <ion-item class="item-tasks">
+    <ion-input
+      class="text-sm"
+      labelPlacement="fixed"
+      placeholder="Titulo"
+      formControlName="title"
+    ></ion-input>
+  </ion-item>
+
+  <ion-item class="item-tasks">
+    <ion-input
+      class="text-sm"
+      labelPlacement="fixed"
+      placeholder="Descripcion"
+      formControlName="description"
+    ></ion-input>
+  </ion-item>
+
+  <div class="options flex">
+    <ion-list>
+      <ion-item>
+        <ion-select
+          [interfaceOptions]="customAlertOptions"
+          placeholder="Prioridad"
+          class="text-sm select-priority m-0"
+          formControlName="priority"
+          [expandedIcon]="'flag'"
+          toggleIcon="flag-outline"
+          mode="ios"
+        >
+          <ion-select-option value="0">Alta</ion-select-option>
+          <ion-select-option value="1">Media</ion-select-option>
+          <ion-select-option value="2">Baja</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+
+    <ion-datetime-button
+      datetime="time"
+      mode="ios"
+      class="time-button"
+    ></ion-datetime-button>
+
+    <ion-modal [keepContentsMounted]="true">
+      <ng-template>
+        <ion-datetime
+          formControlName="time"
+          class="deadline"
+          mode="ios"
+          presentation="time"
+          id="time"
+          size="cover"
+        ></ion-datetime>
+      </ng-template>
+    </ion-modal>
+    <ion-button
+      type="submit"
+      shape="round"
+      color="main"
+      [disabled]="!addTaskForm.valid"
+      class="text-sm m-0 mt-3 ml-8"
+      >Guardar</ion-button
+    >
+  </div>
+</form>
