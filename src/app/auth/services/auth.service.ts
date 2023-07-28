@@ -11,7 +11,7 @@ import {
   tap,
   throwError,
 } from 'rxjs';
-import { User, AuthStatus, AuthResponse } from '../interfaces/index';
+import { User, AuthStatus, AuthResponse, AuthTokenStatus } from '../interfaces/index';
 import { Storage } from '@ionic/storage-angular';
 import { NavController } from '@ionic/angular';
 
@@ -44,7 +44,7 @@ export class AuthService {
 
     return this.http.post<AuthResponse>(apiLogin, body).pipe(
       tap(({ user, token }) => {
-        return from(this.saveTokenAndUpdateSignals(user, token));
+        return from(this.saveTokenAndUpdateSignals(token, user));
       }),
       map(() => true),
 
@@ -66,7 +66,7 @@ export class AuthService {
 
     return this.http.post<AuthResponse>(apiRegister, body).pipe(
       tap(({ user, token }) => {
-        return from(this.saveTokenAndUpdateSignals(user, token));
+        return from(this.saveTokenAndUpdateSignals(token, user));
       }),
       map(() => true),
       catchError((err) => {
@@ -75,8 +75,8 @@ export class AuthService {
     );
   }
 
-  private async saveTokenAndUpdateSignals(user: User, token: string) {
-    this._currentUser.set(user);
+  private async saveTokenAndUpdateSignals(token: string, user?: User) {
+    if(user) this._currentUser.set(user);
     this._authStatus.set(AuthStatus.authenticated);
     this._token.set(token);
     await this.storage.set('token', token);
@@ -96,13 +96,12 @@ export class AuthService {
           this.logout().subscribe();
           return of(false);
         }
-
-        const apiValidateToken: string = `${this.apiUrl}/auth/validate`;
+        const apiValidateToken: string = `${this.apiUrl}/auth/validate-token`;
         const headers = { Authorization: `Bearer ${this.token()}` };
 
-        return this.http.get<AuthResponse>(apiValidateToken, { headers }).pipe(
-          tap(({ user, token }) => {
-            return from(this.saveTokenAndUpdateSignals(user, token));
+        return this.http.get<AuthTokenStatus>(apiValidateToken, { headers }).pipe(
+          tap(({ token }) => {
+            return from(this.saveTokenAndUpdateSignals(token));
           }),
           map(() => true),
           catchError((err) => {

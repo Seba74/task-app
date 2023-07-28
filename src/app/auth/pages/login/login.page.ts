@@ -56,7 +56,8 @@ export class LoginPage implements OnInit {
         this.navController.navigateRoot('/home');
       },
       error: (err) => {
-        this.error = err;
+        console.log(err.message);
+        this.error = err.message;
         if (!this.isToastOpen) {
           this.setOpen(true);
         }
