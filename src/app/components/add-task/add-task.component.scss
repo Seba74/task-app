@@ -10,12 +10,13 @@ ion-item {
     --highlight-color-valid: var(--ion-color-main);
     ion-input {
         --highlight-color: var(--ion-color-main);
+        --highlight-color-invalid: var(--ion-color-main);
+        --highlight-color-valid: var(--ion-color-main);
     }
 }
 
 ion-datetime-button::part(native) {
     background: var(--ion-color-main-tint);
-    font-size: 14px;
 }
 
 .deadline {
@@ -24,6 +25,19 @@ ion-datetime-button::part(native) {
     border-radius: 10px;
 }
 
-ion-select{
+ion-select {
     --padding-start: 0 !important;
+}
+
+.popover {
+    --offset-y: -12rem;
+    --max-width: 160px;
+    cursor: pointer;
+}
+
+ion-textarea {
+    --padding-start: 0;
+    --padding-end: 0;
+    --padding-top: 0;
+    --padding-bottom: 0;
 }

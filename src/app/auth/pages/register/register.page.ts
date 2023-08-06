@@ -49,7 +49,7 @@ export class RegisterPage implements OnInit {
   registerForm: FormGroup = new FormGroup(
     {
       name: new FormControl('', [Validators.required]),
-      surname: new FormControl('', [Validators.required]),
+      lastname: new FormControl('', [Validators.required]),
       username: new FormControl('', [Validators.required]),
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [
@@ -72,17 +72,17 @@ export class RegisterPage implements OnInit {
       return;
     }
     this.registerForm.removeControl('password2');
-    const { name, surname, username, email, password } =
+    const { name, lastname, username, email, password } =
       this.registerForm.value;
     this.authService
-      .register(name, surname, username, email, password)
+      .register(name, lastname, username, email, password)
       .subscribe({
         next: () => {
           this.navController.navigateRoot('/home');
         },
         error: (err) => {
-          this.error = err;
           console.log(err);
+          this.error = err.message;
           if (!this.isToastOpen) {
             this.setOpen(true);
           }

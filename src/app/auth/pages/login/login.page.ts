@@ -32,11 +32,11 @@ export class LoginPage implements OnInit {
   error: string = '';
 
   loginForm: FormGroup = new FormGroup({
-    email: new FormControl('jsebguevara@gmail.com', [
+    email: new FormControl('', [
       Validators.required,
       Validators.email,
     ]),
-    password: new FormControl('Js 1005839965', [
+    password: new FormControl('', [
       Validators.required,
       Validators.minLength(6),
     ]),
@@ -56,7 +56,6 @@ export class LoginPage implements OnInit {
         this.navController.navigateRoot('/home');
       },
       error: (err) => {
-        console.log(err.message);
         this.error = err.message;
         if (!this.isToastOpen) {
           this.setOpen(true);

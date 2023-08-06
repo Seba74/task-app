@@ -1,7 +1,8 @@
 <form [formGroup]="addTaskForm" (ngSubmit)="addTask()" class="form-container">
   <ion-item class="item-tasks">
     <ion-input
-      class="text-sm"
+      #title
+      class="text-xl font-semibold"
       labelPlacement="fixed"
       placeholder="Titulo"
       formControlName="title"
@@ -9,37 +10,47 @@
   </ion-item>
 
   <ion-item class="item-tasks">
-    <ion-input
-      class="text-sm"
+    <ion-textarea
+      class="add-description text-lg font-medium"
       labelPlacement="fixed"
       placeholder="Descripcion"
       formControlName="description"
-    ></ion-input>
+      [autoGrow]="true"
+      maxlength="200"
+    ></ion-textarea>
   </ion-item>
 
-  <div class="options flex">
-    <ion-list>
-      <ion-item>
-        <ion-select
-          [interfaceOptions]="customAlertOptions"
-          placeholder="Prioridad"
-          class="text-sm select-priority m-0"
-          formControlName="priority"
-          [expandedIcon]="'flag'"
-          toggleIcon="flag-outline"
-          mode="ios"
-        >
-          <ion-select-option value="0">Alta</ion-select-option>
-          <ion-select-option value="1">Media</ion-select-option>
-          <ion-select-option value="2">Baja</ion-select-option>
-        </ion-select>
-      </ion-item>
-    </ion-list>
+  <div class="options flex items-center">
+    <ion-button
+      class="text-xs w-32 flex items-start p-0"
+      fill="clear"
+      id="open-button"
+      [color]="priorities[level - 1].color"
+    >
+      {{ priorities[level - 1].name | titlecase }}
+      <ion-icon
+        slot="start"
+        name="flag"
+        [color]="priorities[level - 1].color"
+      ></ion-icon>
+    </ion-button>
+    <ion-popover class="popover" side="top" size="auto" alignment="center" trigger="open-button" [dismissOnSelect]="true">
+      <ng-template>
+        <ion-content>
+          <ion-list>
+            <ion-button *ngFor="let priority of priorities" fill="clear" (click)="getPriority(priority.level)">
+              {{ priority.name | titlecase }}
+              <ion-icon slot="start" name="flag" [color]="priority.color"></ion-icon>
+            </ion-button>
+          </ion-list>
+        </ion-content>
+      </ng-template>
+    </ion-popover>
 
     <ion-datetime-button
       datetime="time"
       mode="ios"
-      class="time-button"
+      class="time-button text-sm"
     ></ion-datetime-button>
 
     <ion-modal [keepContentsMounted]="true">
@@ -51,16 +62,24 @@
           presentation="time"
           id="time"
           size="cover"
-        ></ion-datetime>
+          color="main"
+          locale="es-ES"
+          [value]="formattedDateTime()"
+        >
+        </ion-datetime>
       </ng-template>
     </ion-modal>
+
+    <ion-toggle labelPlacement="start" class="text-sm p-2">¿Rutina?</ion-toggle>
+
     <ion-button
       type="submit"
-      shape="round"
+      fill="clear"
       color="main"
+      class="mr-2 absolute right-0"
       [disabled]="!addTaskForm.valid"
-      class="text-sm m-0 mt-3 ml-8"
-      >Guardar</ion-button
     >
+      <ion-icon slot="icon-only" name="send"></ion-icon>
+    </ion-button>
   </div>
 </form>

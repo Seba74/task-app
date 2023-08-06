@@ -9,5 +9,6 @@ export interface AuthResponse {
 
 export interface AuthTokenStatus {
     ok: boolean;
+    user: User;
     token: string;
 }

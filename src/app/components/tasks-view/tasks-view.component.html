@@ -1,53 +1,34 @@
-<div class="container">
+<div class="main-container relative" #container>
+
+  <div class="drag-line"></div>
+
   <div class="title-content">
-    <h1 class="text-lg font-semibold">{{ title() }}</h1>
+    <h1 class="text-xl font-semibold">{{ title() }}</h1>
+
+    <ion-button fill="clear" (click)="showOptions()">
+      <ion-icon slot="icon-only" name="options-outline"></ion-icon>
+    </ion-button>
   </div>
 
-  <div class="tasks-content">
-    <div class="tasks-list">
-      <div class="task" *ngFor="let task of tasks">
-        <div class="task-content">
-          <div class="task-title">
-            <h2 class="text-md font-semibold">{{ task.title }}</h2>
-          </div>
-          <div class="task-description">
-            <p class="text-sm">{{ task.description }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="tasks-empty" *ngIf="tasks.length === 0">
-      <div class="tasks-empty-content">
-        <h2 class="text-md font-semibold">No hay ningúna tarea prevista aún</h2>
+  <div class="tasks-content flex-col overflow-y-scroll">
+    <app-items
+      class="w-full"
+      [tasks]="filterTasks()"
+      (taskToEdit)="addView($event)"
+    ></app-items>
+    <div class="tasks-empty" *ngIf="filterTasks().length === 0">
+      <div class="tasks-empty-content w-full text-center">
+        <h2 class="text-md font-semibold">{{ contentText }}</h2>
       </div>
     </div>
   </div>
 
   <ion-footer>
-    <div class="add-text">
-      <p class="text-base font-semibold">Agrega una nueva tarea!</p>
-    </div>
-
     <div class="add-section">
       <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-        <ion-fab-button size="small">
+        <ion-fab-button size="small" (click)="addView()">
           <ion-icon name="add"></ion-icon>
         </ion-fab-button>
-        <ion-fab-list side="top" class="right-0">
-          <div class="fab-group gap-x-2 mt-2 flex justify-center items-center">
-            <p class="w-16">Task</p>
-            <ion-fab-button class="option-fab-button" color="main" (click)="addTask('task')">
-              <ion-icon name="create" color="white"></ion-icon>
-            </ion-fab-button>
-          </div>
-          <div class="fab-group gap-x-2 mt-2 flex justify-center items-center">
-            <p class="w-16">Habit</p>
-            <ion-fab-button class="option-fab-button" color="main" (click)="addTask('habit')">
-              <ion-icon name="sync-circle" color="white"></ion-icon>
-            </ion-fab-button>
-          </div>
-        </ion-fab-list>
       </ion-fab>
     </div>
   </ion-footer>

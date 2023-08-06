@@ -1,0 +1,61 @@
+<div class="h-full w-full">
+  <div class="drag-line"></div>
+  <ion-title class="my-8 text-2xl font-semibold">{{ title }}</ion-title>
+  
+  <div class="flex flex-col justify-center">
+    <ion-title class="my-3 text-base font-semibold">ORDEN</ion-title>
+    <ion-item
+    (click)="selectOptions('Ordenar Por', sortingOptions, sortOption)"
+    [button]="true"
+    [detail]="false"
+    lines="none"
+    class="mb-2"
+    >
+      <ion-icon class="mr-5" name="swap-vertical" color="main"></ion-icon>
+      <div class="flex flex-col">
+        <ion-label class="text-xl font-medium">Ordernar Por</ion-label>
+        <ion-label class="text-xs font-light">{{ sortOption.label }}</ion-label>
+      </div>
+    </ion-item>
+    
+    <ion-item
+    (click)="selectOptions('Ordenar En', orderBy, orderOption)"
+    [button]="true"
+    [detail]="false"
+    lines="full"
+    >
+      <ion-icon class="mr-5" name="swap-vertical" color="main"></ion-icon>
+      <div class="flex flex-col">
+        <ion-label class="text-xl font-medium">Ordernar en</ion-label>
+        <ion-label class="text-xs font-light">{{ orderOption.label }}</ion-label>
+      </div>
+    </ion-item>
+    
+    <ion-title class="my-3 text-base font-semibold">FILTROS</ion-title>
+    <ion-item
+    (click)="selectOptions('Tipo de Prioridad', filterOptions, filterOption)"
+    [button]="true"
+    [detail]="false"
+      lines="full"
+    >
+      <ion-icon class="mr-5" name="flag" color="main"></ion-icon>
+      <div class="flex flex-col">
+        <ion-label class="text-xl font-medium">Prioridad</ion-label>
+        <ion-label class="text-sm font-light">{{
+          filterOption.label
+        }}</ion-label>
+      </div>
+    </ion-item>
+  </div>
+</div>
+<ion-footer class="ion-no-border mt-16 mb-5" mode="ios">
+  <ion-toolbar>   
+    <ion-buttons slot="start" class="ml-2">
+      <ion-button class="text-lg" (click)="restart()">Reiniciar</ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end" class="mr-2">
+      <ion-button class="mr-4 text-lg" (click)="cancel()">Cancelar</ion-button>
+      <ion-button class="text-lg" (click)="confirm()" [strong]="true">Aceptar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

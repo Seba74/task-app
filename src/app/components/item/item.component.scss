@@ -1,0 +1,23 @@
+ion-item {
+    --background: #fff;
+    --padding-start: 0;
+    --transition: all 0.3s ease-in-out;
+    --border-color: var(--ion-color-medium);
+}
+
+ion-item-options {
+    border: none;
+}
+
+.priority-bar {
+    position: absolute;
+    top: 4px;
+    left: 5px;
+    height: 90%;
+    width: 3px;
+    transition: all 0.3s ease-in-out;
+}
+
+.desc-label {
+    white-space: normal;
+}

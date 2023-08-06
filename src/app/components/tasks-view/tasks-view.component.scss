@@ -1,4 +1,4 @@
-.container {
+.main-container {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -6,16 +6,26 @@
 }
 
 .title-content {
-    width: max-content;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
     height: max-content;
-    margin: 20px 0 0 20px;
+    margin: 20px 0 10px 20px;
+    h1{
+        width: max-content;
+    }
+
+    ion-button{
+        --padding-start: 0;
+        --padding-end: 40px;
+    }
 }
 
 .tasks-content {
     display: flex;
     width: 100%;
     height: 100%;
-    justify-content: center;
 }
 
 .tasks-empty {
@@ -26,7 +36,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 1.6rem;
+    margin: 1.5rem 0;
 }
 
 .fab-group p {
@@ -35,5 +45,4 @@
     color: var(--ion-color-white);
     padding: 10px;
     margin-bottom: 40px;
-    // left border radius has to indicate the border radius of the fab button
 }

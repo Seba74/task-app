@@ -1,0 +1,29 @@
+<ion-item-options side="start">
+  <ion-item-option color="primary" [expandable]="true">
+    <ion-icon slot="icon-only" name="checkmark-sharp" color="white"></ion-icon>
+  </ion-item-option>
+</ion-item-options>
+
+<ion-item class="flex flex-col" type="button" (click)="editTask()">
+
+  <div class="priority-bar" [style]="{ 'background': task.priority.color_code }"></div>
+
+  <div class="flex flex-col pl-5">
+    <ion-label>
+      <h2 class="text-base">{{ task.title }}</h2>
+    </ion-label>
+    <ion-label class="desc-label">
+      <p class="text-xs">{{ task.description }}</p>
+    </ion-label>
+    
+    <ion-chip class="w-max py-1 px-2" color="primary" mode="ios">
+      <ion-label> {{ deadlineJustTime() }} </ion-label>
+    </ion-chip>
+  </div>
+</ion-item>
+
+<ion-item-options side="end">
+  <ion-item-option color="danger" [expandable]="true" (click)="console()">
+    <ion-icon slot="icon-only" name="trash" color="white"></ion-icon>
+  </ion-item-option>
+</ion-item-options>

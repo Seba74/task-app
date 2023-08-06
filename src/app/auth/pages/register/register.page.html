@@ -15,58 +15,66 @@
       (ngSubmit)="register()"
       class="form-container"
     >
-      <ion-item class="mb-5 text-lg input-content">
-        <ion-input
-          label="Nombre"
-          labelPlacement="floating"
-          type="text"
-          formControlName="name"
-          class="form-input"
-        ></ion-input>
-      </ion-item>
-      <ion-item class="mb-5 text-lg input-content">
-        <ion-input
-          label="Apellido"
-          labelPlacement="floating"
-          type="text"
-          formControlName="surname"
-          class="form-input"
-        ></ion-input>
-      </ion-item>
-      <ion-item class="mb-5 text-lg input-content">
-        <ion-input
-          label="Usuario"
-          labelPlacement="floating"
-          type="text"
-          formControlName="username"
-          class="form-input"
-        ></ion-input>
-      </ion-item>
-      <ion-item class="mb-5 text-lg input-content">
-        <ion-input
-          label="Correo"
-          labelPlacement="floating"
-          type="email"
-          formControlName="email"
-          class="form-input"
-        ></ion-input>
-      </ion-item>
-      <ion-item class="mb-5 text-lg input-content">
-        <ion-input
-          label="Contraseña"
-          labelPlacement="floating"
-          type="password"
-          formControlName="password"
-        ></ion-input>
-      </ion-item>
-      <ion-item class="mb-5 text-lg input-content">
-        <ion-input
-          label="Repetir contraseña"
-          labelPlacement="floating"
-          type="password"
-          formControlName="password2"
-        ></ion-input>
-      </ion-item>
+      <ion-input
+        label="Nombre"
+        labelPlacement="floating"
+        color="primary"
+        type="text"
+        formControlName="name"
+        class="text-lg"
+        pattern="^[a-zA-Z ]*$"
+        inputmode="text"
+        autocomplete="name"
+      ></ion-input>
+      <ion-input
+        label="Apellido"
+        labelPlacement="floating"
+        type="text"
+        formControlName="lastname"
+        class="text-lg"
+        pattern="^[a-zA-Z ]*$"
+        inputmode="text"
+        autocomplete="family-name"
+      ></ion-input>
+      <ion-input
+        label="Usuario"
+        labelPlacement="floating"
+        type="text"
+        formControlName="username"
+        class="text-lg"
+        pattern="^[a-zA-Z0-9]*$"
+        inputmode="text"
+        autocomplete="username"
+      ></ion-input>
+      <ion-input
+        label="Correo"
+        labelPlacement="floating"
+        type="email"
+        formControlName="email"
+        class="text-lg"
+        inputmode="email"
+        autocomplete="email"
+      ></ion-input>
+      <ion-input
+        label="Contraseña"
+        labelPlacement="floating"
+        type="password"
+        class="text-lg"
+        formControlName="password"
+        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
+        inputmode="text"
+        errorText="debe tener al menos una mayúscula, una minúscula y un número"
+        autocomplete="new-password"
+      ></ion-input>
+      <ion-input
+        label="Repetir contraseña"
+        labelPlacement="floating"
+        class="text-lg"
+        type="password"
+        formControlName="password2"
+        inputmode="text"
+        autocomplete="new-password"
+      ></ion-input>
 
       <ion-button
         type="submit"

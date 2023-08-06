@@ -1,7 +1,4 @@
 export interface Role {
-    idRole: number;
+    _id: number;
     name: string;
-    description: string;
-    createDate: Date;
-    updateDate: Date;
 }

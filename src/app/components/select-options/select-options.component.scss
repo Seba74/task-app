@@ -1,0 +1,14 @@
+ion-item {
+    --padding-start: 0;
+}
+
+ion-checkbox {
+    width: 100%;
+    --checkmark-width: .2rem;
+    --size: 1.4rem;
+}
+
+ion-list {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}

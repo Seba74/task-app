@@ -1,4 +1,4 @@
-import { enableProdMode, importProvidersFrom } from '@angular/core';
+import { LOCALE_ID, enableProdMode, importProvidersFrom } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { RouteReuseStrategy, provideRouter } from '@angular/router';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
@@ -9,6 +9,10 @@ import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { Drivers } from '@ionic/storage';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { registerLocaleData } from '@angular/common';
+import localeEsAr from '@angular/common/locales/es-AR';
+registerLocaleData(localeEsAr, 'es-AR');
 
 if (environment.production) {
   enableProdMode();
@@ -17,14 +21,14 @@ if (environment.production) {
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: LOCALE_ID, useValue: 'es-AR'},
     importProvidersFrom(IonicModule.forRoot({})),
-    importProvidersFrom(
-      IonicStorageModule.forRoot({
+    importProvidersFrom(IonicStorageModule.forRoot({
         name: 'taskMate',
         driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage],
-      })
-    ),
+    })),
     provideRouter(routes),
     provideHttpClient(),
-  ],
+    provideAnimations()
+],
 });

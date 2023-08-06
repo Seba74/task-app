@@ -1,0 +1,18 @@
+<div>
+  <ion-title class="mt-4 text-lg font-semibold">{{ title }}</ion-title>
+
+  <ion-list id="modal-list" [inset]="true">
+    <ion-item *ngFor="let option of options" lines="none">
+      <ion-checkbox
+        class="text-sm font-medium"
+        slot="start"
+        mode="ios"
+        justify="start"
+        labelPlacement="end"
+        [checked]="option.value === selectedOption.value"
+        (ionChange)="checkboxChange(option)"
+        >{{ option.label }}</ion-checkbox
+      >
+    </ion-item>
+  </ion-list>
+</div>

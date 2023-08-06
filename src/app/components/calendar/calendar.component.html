@@ -1,8 +1,10 @@
 <ion-datetime
-  displayFormat="DD/MM/YYYY"
-  mode="ios"
+  #datePicker
   size="cover"
+  mode="ios"
   presentation="date"
-  (ionChange)="onDateChange($event)"
+  min="{{getYesterdayDate()}}"
+  (ionChange)="onDateChange(datePicker.value)"
   color="main"
+  locale="es-ES"
 ></ion-datetime>

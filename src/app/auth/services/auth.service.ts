@@ -11,9 +11,14 @@ import {
   tap,
   throwError,
 } from 'rxjs';
-import { User, AuthStatus, AuthResponse, AuthTokenStatus } from '../interfaces/index';
+import {
+  User,
+  AuthStatus,
+  AuthResponse,
+  AuthTokenStatus,
+} from '../interfaces/index';
 import { Storage } from '@ionic/storage-angular';
-import { NavController } from '@ionic/angular';
+import { LoadingController, NavController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root',
@@ -32,23 +37,37 @@ export class AuthService {
   public currentUser = computed(() => this._currentUser());
   public authStatus = computed(() => this._authStatus());
   public token = computed(() => this._token());
-
+  public loadingController = inject(LoadingController);
+  
   constructor() {
-    this.storage.create();
-    this.validateToken().subscribe();
+    this.showLoading().finally(() => {
+      this.validateToken().subscribe();
+    });
+    this.storage.create()
+  }
+
+  async showLoading() {
+    const loading = await this.loadingController.create({
+      mode: 'ios',
+      spinner: 'dots',
+      cssClass: 'custom-loading',
+    });
+    loading.present();
   }
 
   login(email: string, password: string): Observable<boolean> {
     const apiLogin: string = `${this.apiUrl}/auth/login`;
     const body = { email, password };
-
+    this.showLoading();
     return this.http.post<AuthResponse>(apiLogin, body).pipe(
       tap(({ user, token }) => {
+        this.loadingController.dismiss();
         return from(this.saveTokenAndUpdateSignals(token, user));
       }),
       map(() => true),
-
+      
       catchError((err) => {
+        this.loadingController.dismiss();
         return throwError(err.error);
       })
     );
@@ -56,13 +75,13 @@ export class AuthService {
 
   register(
     name: string,
-    surname: string,
+    lastname: string,
     username: string,
     email: string,
     password: string
   ): Observable<boolean> {
     const apiRegister: string = `${this.apiUrl}/auth/register`;
-    const body = { name, surname, username, email, password };
+    const body = { name, lastname, username, email, password };
 
     return this.http.post<AuthResponse>(apiRegister, body).pipe(
       tap(({ user, token }) => {
@@ -75,8 +94,8 @@ export class AuthService {
     );
   }
 
-  private async saveTokenAndUpdateSignals(token: string, user?: User) {
-    if(user) this._currentUser.set(user);
+  private async saveTokenAndUpdateSignals(token: string, user: User) {
+    this._currentUser.set(user);
     this._authStatus.set(AuthStatus.authenticated);
     this._token.set(token);
     await this.storage.set('token', token);
@@ -98,19 +117,19 @@ export class AuthService {
         }
         const apiValidateToken: string = `${this.apiUrl}/auth/validate-token`;
         const headers = { Authorization: `Bearer ${this.token()}` };
-
         return this.http.get<AuthTokenStatus>(apiValidateToken, { headers }).pipe(
-          tap(({ token }) => {
-            return from(this.saveTokenAndUpdateSignals(token));
-          }),
-          map(() => true),
-          catchError((err) => {
-            this._authStatus.set(AuthStatus.notAuthenticated);
-            return of(false);
-          })
-        );
+            tap(({ user, token }) => {
+              if(!user || !token) return this.logout().subscribe();
+              return from(this.saveTokenAndUpdateSignals(token, user));
+            }),
+            map(() => true),
+            catchError((err) => {
+              this.logout().subscribe();
+              return throwError(err.error);
+            })
+          );
       })
-    );
+    );  
   }
 
   logout(): Observable<boolean> {
