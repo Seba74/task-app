@@ -18,6 +18,7 @@ import { AuthService } from 'src/app/auth/services/auth.service';
 import { forkJoin } from 'rxjs';
 import { utcToZonedTime, format } from 'date-fns-tz';
 import { TaskOptionsComponent } from '../task-options/task-options.component';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-tasks-view',
@@ -51,22 +52,26 @@ export class TasksViewComponent implements OnInit {
 
   private _user = signal<User | null>(this.authService.currentUser());
   public user = computed<User | null>(() => this._user());
-  private keyboard: KeyboardPlugin = Keyboard;
+  private keyboard: any = Capacitor.isNativePlatform()? Keyboard : null;
   public keyboardChange = effect(() => {
-    return this.keyboard.addListener('keyboardWillShow', (info) => {
-      this.addModal.style.setProperty(
-        'margin-bottom',
-        `${info.keyboardHeight}px`
-      );
-      this.addModal.style.setProperty('--height', `max-content`);
-    });
+    if (this.keyboard) {
+      return this.keyboard.addListener('keyboardWillShow', (info: any) => {
+        this.addModal.style.setProperty(
+          'margin-bottom',
+          `${info.keyboardHeight}px`
+        );
+        this.addModal.style.setProperty('--height', `max-content`);
+      });
+    }
   });
 
   public keyboardHide = effect(() => {
-    return this.keyboard.addListener('keyboardWillHide', () => {
-      this.addModal.style.setProperty('margin-bottom', `0px`);
-      this.addModal.style.setProperty('--height', `max-content`);
-    });
+    if (this.keyboard) {
+      return this.keyboard.addListener('keyboardWillHide', () => {
+        this.addModal.style.setProperty('margin-bottom', `0px`);
+        this.addModal.style.setProperty('--height', `max-content`);
+      });
+    }
   });
 
   public title = computed<string>(() => {
@@ -113,7 +118,8 @@ export class TasksViewComponent implements OnInit {
   }
 
   async addView(task?: ITask) {
-    this.keyboard.show();
+    if(this.keyboard) this.keyboard.show();
+
     const data = await this.presentAddModal(task);
 
     if (data) {

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import {
@@ -58,8 +58,15 @@ export class AuthService {
   login(email: string, password: string): Observable<boolean> {
     const apiLogin: string = `${this.apiUrl}/auth/login`;
     const body = { email, password };
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      })
+    };
+
     this.showLoading();
-    return this.http.post<AuthResponse>(apiLogin, body).pipe(
+    return this.http.post<AuthResponse>(apiLogin, body, httpOptions).pipe(
       tap(({ user, token }) => {
         this.loadingController.dismiss();
         return from(this.saveTokenAndUpdateSignals(token, user));
@@ -83,7 +90,13 @@ export class AuthService {
     const apiRegister: string = `${this.apiUrl}/auth/register`;
     const body = { name, lastname, username, email, password };
 
-    return this.http.post<AuthResponse>(apiRegister, body).pipe(
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      })
+    };
+
+    return this.http.post<AuthResponse>(apiRegister, body, httpOptions).pipe(
       tap(({ user, token }) => {
         return from(this.saveTokenAndUpdateSignals(token, user));
       }),
@@ -116,7 +129,7 @@ export class AuthService {
           return of(false);
         }
         const apiValidateToken: string = `${this.apiUrl}/auth/validate-token`;
-        const headers = { Authorization: `Bearer ${this.token()}` };
+        const headers = { Authorization: `Bearer ${this.token()}`};
         return this.http.get<AuthTokenStatus>(apiValidateToken, { headers }).pipe(
             tap(({ user, token }) => {
               if(!user || !token) return this.logout().subscribe();
