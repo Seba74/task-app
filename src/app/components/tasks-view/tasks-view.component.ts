@@ -60,7 +60,7 @@ export class TasksViewComponent implements OnInit {
 
   private _user = signal<User | null>(this.authService.currentUser());
   public user = computed<User | null>(() => this._user());
-  private keyboard: any = Keyboard;
+  private keyboard: any = Capacitor.isNativePlatform() ? Keyboard : null;
   public keyboardChange = effect(() => {
     if (this.keyboard) {
       return this.keyboard.addListener('keyboardWillShow', (info: any) => {

@@ -10,11 +10,9 @@ const config: CapacitorConfig = {
   },
   plugins: {
     Keyboard: {
-      resize: KeyboardResize.Body,
-      style: KeyboardStyle.Dark,
-    },
-  }
-
+      resize: KeyboardResize.None,
+    }
+  },
 };
 
 export default config;
