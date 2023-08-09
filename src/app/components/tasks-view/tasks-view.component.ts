@@ -60,7 +60,7 @@ export class TasksViewComponent implements OnInit {
 
   private _user = signal<User | null>(this.authService.currentUser());
   public user = computed<User | null>(() => this._user());
-  private keyboard: any = Capacitor.isNativePlatform() ? Keyboard : null;
+  private keyboard: any = Keyboard;
   public keyboardChange = effect(() => {
     if (this.keyboard) {
       return this.keyboard.addListener('keyboardWillShow', (info: any) => {
@@ -270,9 +270,9 @@ export class TasksViewComponent implements OnInit {
     this._filterTasks.set(this.sortTasks(this.sortingOptions));
 
     if (type === 'complete') {
+      this.toastIcon = 'checkmark-circle-outline';
       this.toastClass = 'toast-success';
       this.toastMessage = 'Tarea completada';
-      this.toastIcon = 'checkmark-circle-outline';
       this.isToastOpen = true;
       this.taskService
         .updateTask(task._id, { is_completed: true })
@@ -282,9 +282,9 @@ export class TasksViewComponent implements OnInit {
           }, 2000);
         });
     } else {
+      this.toastIcon = 'close-circle-outline';
       this.toastClass = 'toast-delete';
       this.toastMessage = 'Tarea eliminada';
-      this.toastIcon = 'close-circle-outline';
       this.isToastOpen = true;
       this.taskService.deleteTask(task._id).subscribe(() => {
         setTimeout(() => {
