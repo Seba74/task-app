@@ -61,26 +61,26 @@ export class TasksViewComponent implements OnInit {
   private _user = signal<User | null>(this.authService.currentUser());
   public user = computed<User | null>(() => this._user());
   private keyboard: any = Capacitor.isNativePlatform() ? Keyboard : null;
-  public keyboardChange = effect(() => {
-    if (this.keyboard) {
-      return this.keyboard.addListener('keyboardWillShow', (info: any) => {
-        this.addModal.style.setProperty(
-          'margin-bottom',
-          `${info.keyboardHeight}px`
-        );
-        this.addModal.style.setProperty('--height', `max-content`);
-      });
-    }
-  });
+  // public keyboardChange = effect(() => {
+  //   if (this.keyboard) {
+  //     return this.keyboard.addListener('keyboardWillShow', (info: any) => {
+  //       this.addModal.style.setProperty(
+  //         'margin-bottom',
+  //         `${info.keyboardHeight}px`
+  //       );
+  //       this.addModal.style.setProperty('--height', `max-content`);
+  //     });
+  //   }
+  // });
 
-  public keyboardHide = effect(() => {
-    if (this.keyboard) {
-      return this.keyboard.addListener('keyboardWillHide', () => {
-        this.addModal.style.setProperty('margin-bottom', `0px`);
-        this.addModal.style.setProperty('--height', `max-content`);
-      });
-    }
-  });
+  // public keyboardHide = effect(() => {
+  //   if (this.keyboard) {
+  //     return this.keyboard.addListener('keyboardWillHide', () => {
+  //       this.addModal.style.setProperty('margin-bottom', `0px`);
+  //       this.addModal.style.setProperty('--height', `max-content`);
+  //     });
+  //   }
+  // });
 
   public title = computed<string>(() => {
     const dateArray = this.idDate.split('-');
