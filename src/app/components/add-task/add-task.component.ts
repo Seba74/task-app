@@ -38,32 +38,31 @@ export class AddTaskComponent {
     }
     this.title.setFocus();
   }
-  
+
   addTask() {
     if (!this.addTaskForm.valid) {
       return;
     }
-
+    const { title, description, time } = this.addTaskForm.value;
+    let task: any = {};
     if (!this.task) {
-      const { title, description, time } = this.addTaskForm.value;
-      const task = {
+      task = {
         title,
         description,
-        levelPriority: this.level,
+        idPriority: this.priorities.find((p) => p.level === this.level)?._id,
         deadline: time,
       };
-      this.modalController.dismiss(task);
     } else {
       const { title, description, time } = this.addTaskForm.value;
-      const task: any = {};
       if (title !== this.task.title) task.title = title;
       if (description !== this.task.description) task.description = description;
       if (time !== this.task.deadline) task.deadline = time;
-      if(this.level !== this.task.priority.level) task.idPriority = this.priorities.find(
-        (p) => p.level === this.level
-      )?._id;  
-      this.modalController.dismiss(task);
+      if (this.level !== this.task.priority.level)
+        task.idPriority = this.priorities.find(
+          (p) => p.level === this.level
+        )?._id;
     }
+    this.modalController.dismiss(task);
   }
 
   getPriority(value: number) {

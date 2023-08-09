@@ -61,26 +61,26 @@ export class TasksViewComponent implements OnInit {
   private _user = signal<User | null>(this.authService.currentUser());
   public user = computed<User | null>(() => this._user());
   private keyboard: any = Capacitor.isNativePlatform() ? Keyboard : null;
-  // public keyboardChange = effect(() => {
-  //   if (this.keyboard) {
-  //     return this.keyboard.addListener('keyboardWillShow', (info: any) => {
-  //       this.addModal.style.setProperty(
-  //         'margin-bottom',
-  //         `${info.keyboardHeight}px`
-  //       );
-  //       this.addModal.style.setProperty('--height', `max-content`);
-  //     });
-  //   }
-  // });
+  public keyboardChange = effect(() => {
+    if (this.keyboard) {
+      return this.keyboard.addListener('keyboardWillShow', (info: any) => {
+        this.addModal.style.setProperty(
+          'margin-bottom',
+          `${info.keyboardHeight}px`
+        );
+        this.addModal.style.setProperty('--height', `max-content`);
+      });
+    }
+  });
 
-  // public keyboardHide = effect(() => {
-  //   if (this.keyboard) {
-  //     return this.keyboard.addListener('keyboardWillHide', () => {
-  //       this.addModal.style.setProperty('margin-bottom', `0px`);
-  //       this.addModal.style.setProperty('--height', `max-content`);
-  //     });
-  //   }
-  // });
+  public keyboardHide = effect(() => {
+    if (this.keyboard) {
+      return this.keyboard.addListener('keyboardWillHide', () => {
+        this.addModal.style.setProperty('margin-bottom', `0px`);
+        this.addModal.style.setProperty('--height', `max-content`);
+      });
+    }
+  });
 
   public title = computed<string>(() => {
     const dateArray = this.idDate.split('-');
@@ -153,15 +153,12 @@ export class TasksViewComponent implements OnInit {
   }
 
   private async createTask(data: any) {
-    this.priorityService
-      .getPriorityByLevel(data.levelPriority)
-      .subscribe((p) => {
         const task: ICreateTask = {
           title: data.title,
           description: data.description,
           idDate: this.idDate,
           deadline: data.deadline,
-          idPriority: p._id,
+          idPriority: data.idPriority,
           idUser: this.user()!._id,
         };
         this.taskService.createTask(task).subscribe((t) => {
@@ -169,7 +166,6 @@ export class TasksViewComponent implements OnInit {
           this._filterTasks.set(this.sortTasks(this.sortingOptions));
           this.loading.dismiss();
         });
-      });
   }
 
   private async updateTask(task: ITask, data: any) {
