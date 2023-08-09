@@ -15,10 +15,11 @@
       class="w-full"
       [tasks]="filterTasks()"
       (taskToEdit)="addView($event)"
+      (sendActionTask)="actionTask($event)"
     ></app-items>
-    <div class="tasks-empty" *ngIf="filterTasks().length === 0">
+    <div class="tasks-empty" *ngIf="emptyTasks()">
       <div class="tasks-empty-content w-full text-center">
-        <h2 class="text-md font-semibold">{{ contentText }}</h2>
+        <h2 class="text-md font-semibold">No hay ningúna tarea prevista aún</h2>
       </div>
     </div>
   </div>
@@ -33,3 +34,14 @@
     </div>
   </ion-footer>
 </div>
+
+<ion-toast
+    [isOpen]="isToastOpen"
+    [message]="toastMessage"
+    [duration]="2000"
+    [cssClass]="toastClass"
+    [icon]="toastIcon"
+    [position]="'bottom'"
+    [mode]="'ios'"
+    (didDismiss)="setOpen(false)"
+  ></ion-toast>

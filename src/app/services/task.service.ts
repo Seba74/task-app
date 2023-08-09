@@ -26,6 +26,15 @@ export class TaskService {
     return this.http.get<DataResponse>(taskApi, { headers }).pipe(map((response) => response.data));
   }
 
+  public getNoCompletedTasksByDate(idDate: string): Observable<ITask[]> {
+    const idUser = this.AuthService.currentUser()?._id;
+    const headers = { Authorization: `Bearer ${this.AuthService.token()}` };
+    const taskApi: string = `${this.apiUrl}/user/${idUser}/date/${idDate}`;
+    return this.http.get<DataResponse>(taskApi, { headers }).pipe(map((response) => {
+      return response.data.filter((task: ITask) => !task.is_completed);
+    }));
+  }
+  
   public getTaskById(idTask: string): Observable<ITask> {
     const headers = { Authorization: `Bearer ${this.AuthService.token()}` };
     const taskApi: string = `${this.apiUrl}/${idTask}`;
@@ -42,6 +51,12 @@ export class TaskService {
     const headers = { Authorization: `Bearer ${this.AuthService.token()}` };
     const taskApi: string = `${this.apiUrl}/${id}`;
     return this.http.put<DataResponse>(taskApi, task, { headers }).pipe(map((response) => response.data));
+  }
+
+  public deleteTask(id: string): Observable<ITask> {
+    const headers: any = { Authorization: `Bearer ${this.AuthService.token()}` };
+    const taskApi: string = `${this.apiUrl}/${id}`;
+    return this.http.delete<DataResponse>(taskApi, { headers }).pipe(map((response) => response.data));
   }
 
 }

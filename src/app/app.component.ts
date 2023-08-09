@@ -28,7 +28,6 @@ export class AppComponent {
   });
 
   public authStatusChangedEffect = effect(async () => {
-    console.log('authStatusChangedEffect');
     if (this.authIsChecked()) {
       await this.loadingController.dismiss();
     }

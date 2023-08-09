@@ -1,5 +1,5 @@
 <ion-item-options side="start">
-  <ion-item-option color="primary" [expandable]="true">
+  <ion-item-option color="primary" [expandable]="true" (click)="actionTask('complete')">
     <ion-icon slot="icon-only" name="checkmark-sharp" color="white"></ion-icon>
   </ion-item-option>
 </ion-item-options>
@@ -23,7 +23,7 @@
 </ion-item>
 
 <ion-item-options side="end">
-  <ion-item-option color="danger" [expandable]="true" (click)="console()">
+  <ion-item-option color="danger" [expandable]="true" (click)="actionTask('delete')">
     <ion-icon slot="icon-only" name="trash" color="white"></ion-icon>
   </ion-item-option>
 </ion-item-options>

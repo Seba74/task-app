@@ -10,6 +10,7 @@ export class ItemComponent  implements OnInit {
   @Input() task!: ITask;
 
   @Output() taskToEdit: EventEmitter<ITask> = new EventEmitter();
+  @Output() sendActionTask: EventEmitter<[ITask, string]> = new EventEmitter();
 
   public deadlineJustTime = computed(() => {
     const time = this.task.deadline.split('T')[1];
@@ -23,8 +24,8 @@ export class ItemComponent  implements OnInit {
     this.taskToEdit.emit(this.task);
   }
 
-  console(){
-    console.log(this.task);
+  actionTask(type: string){
+    this.sendActionTask.emit([this.task, type]);
   }
 
 }

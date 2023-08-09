@@ -28,9 +28,11 @@ import { Capacitor } from '@capacitor/core';
 export class TasksViewComponent implements OnInit {
   @Input() idDate: string = '';
 
-  @Input() sortOption: any = { value: 'priority', label: 'Prioridad' };
-  @Input() filterOption: any = { value: 0, label: 'Todas' };
-  @Input() orderOption: any = { value: 'asc', label: 'Ascendente' };
+  private sortingOptions = {
+    sortOption: { value: 'priority', label: 'Prioridad' },
+    filterOption: { value: 0, label: 'Todas' },
+    orderOption: { value: 'asc', label: 'Ascendente' },
+  };
 
   private modalController = inject(ModalController);
   private loadingController = inject(LoadingController);
@@ -42,7 +44,11 @@ export class TasksViewComponent implements OnInit {
 
   public loading!: HTMLIonLoadingElement;
   public priorities: IPriority[] = [];
-  public contentText: string = '';
+
+  public isToastOpen: boolean = false;
+  public toastMessage: string = '';
+  public toastIcon: string = '';
+  public toastClass: string = '';
 
   private _tasks = signal<ITask[]>([]);
   public tasks = computed<ITask[]>(() => this._tasks());
@@ -50,9 +56,11 @@ export class TasksViewComponent implements OnInit {
   private _filterTasks = signal<ITask[]>([]);
   public filterTasks = computed<ITask[]>(() => this._filterTasks());
 
+  public emptyTasks = computed<boolean>(() => this.filterTasks().length === 0);
+
   private _user = signal<User | null>(this.authService.currentUser());
   public user = computed<User | null>(() => this._user());
-  private keyboard: any = Capacitor.isNativePlatform()? Keyboard : null;
+  private keyboard: any = Capacitor.isNativePlatform() ? Keyboard : null;
   public keyboardChange = effect(() => {
     if (this.keyboard) {
       return this.keyboard.addListener('keyboardWillShow', (info: any) => {
@@ -93,32 +101,24 @@ export class TasksViewComponent implements OnInit {
   });
 
   public tasksChanges = effect(() => {
-    if (this.tasks().length > 0) {
-      this.loading.dismiss();
-    }
+    if(this.tasks().length > 0) this.loading.dismiss();
   });
 
   ngOnInit() {
     this.showLoading();
     forkJoin([
       this.priorityService.getAllPriorities(),
-      this.taskService.getUserTasksByDate(this.idDate),
+      this.taskService.getNoCompletedTasksByDate(this.idDate),
     ]).subscribe(([priorities, tasks]) => {
-      if (tasks.length === 0) {
-        this.contentText = 'No hay ningúna tarea prevista aún';
-        this.loading.dismiss();
-      } else {
-        this.updateTaskDeadlines(tasks);
-        this.sortTasksByPriority(tasks);
-        this._tasks.set(tasks);
-        this._filterTasks.set(tasks);
-      }
+      if(tasks.length === 0) this.loading.dismiss();
+      this._tasks.set(tasks);
+      this._filterTasks.set(this.sortTasks(this.sortingOptions));
       this.priorities = priorities;
     });
   }
 
   async addView(task?: ITask) {
-    if(this.keyboard) this.keyboard.show();
+    if (this.keyboard) this.keyboard.show();
 
     const data = await this.presentAddModal(task);
 
@@ -165,11 +165,8 @@ export class TasksViewComponent implements OnInit {
           idUser: this.user()!._id,
         };
         this.taskService.createTask(task).subscribe((t) => {
-          t.deadline = this.toLocalDate(t.deadline);
-          this._tasks.update((tasks) =>
-            this.sortTasksByPriority([...tasks, t])
-          );
-          this._filterTasks.set(this.tasks());
+          this._tasks.update((tasks) => [...tasks, t]);
+          this._filterTasks.set(this.sortTasks(this.sortingOptions));
           this.loading.dismiss();
         });
       });
@@ -177,32 +174,14 @@ export class TasksViewComponent implements OnInit {
 
   private async updateTask(task: ITask, data: any) {
     this.taskService.updateTask(task._id, data).subscribe((t) => {
-      t.deadline = this.toLocalDate(t.deadline);
       this._tasks.update((tasks) => {
         const index = tasks.findIndex((t) => t._id === task._id);
         tasks[index] = t;
         return tasks;
       });
-      this._filterTasks.set(this.tasks());
+      this._filterTasks.set(this.sortTasks(this.sortingOptions));
       this.loading.dismiss();
     });
-  }
-
-  private toLocalDate(date: string) {
-    const localDate = utcToZonedTime(date, 'America/Argentina/Buenos_Aires');
-    return format(localDate, "yyyy-MM-dd'T'HH:mm:ss", {
-      timeZone: 'America/Argentina/Buenos_Aires',
-    });
-  }
-
-  private updateTaskDeadlines(tasks: ITask[]) {
-    tasks.forEach((task) => {
-      task.deadline = this.toLocalDate(task.deadline);
-    });
-  }
-
-  private sortTasksByPriority(tasks: ITask[]) {
-    return tasks.sort((a, b) => a.priority.level - b.priority.level);
   }
 
   public sortTasks(data: any) {
@@ -220,20 +199,18 @@ export class TasksViewComponent implements OnInit {
     }
 
     if (sortOption.value === 'deadline') {
-      filteredTasks.sort(
-        (a, b) => {
-          const dateA = this.getTimeFromDate(a.deadline);
-          const dateB = this.getTimeFromDate(b.deadline);
-          return dateA.localeCompare(dateB);
-        }
-      );
+      filteredTasks.sort((a, b) => {
+        const dateA = this.getTimeFromDate(a.deadline);
+        const dateB = this.getTimeFromDate(b.deadline);
+        return dateA.localeCompare(dateB);
+      });
     }
 
     if (orderOption.value === 'desc') {
       filteredTasks.reverse();
     }
 
-    this._filterTasks.set(filteredTasks);
+    return filteredTasks;
   }
 
   getTimeFromDate(date: string) {
@@ -257,9 +234,9 @@ export class TasksViewComponent implements OnInit {
     const optionsModal = await this.modalController.create({
       component: TaskOptionsComponent,
       componentProps: {
-        sortOption: this.sortOption,
-        orderOption: this.orderOption,
-        filterOption: this.filterOption,
+        sortOption: this.sortingOptions.sortOption,
+        orderOption: this.sortingOptions.orderOption,
+        filterOption: this.sortingOptions.filterOption,
       },
       cssClass: 'options-modal',
       animated: true,
@@ -274,9 +251,50 @@ export class TasksViewComponent implements OnInit {
 
     await optionsModal.present();
     const { data } = await optionsModal.onDidDismiss();
-    this.sortOption = data.sortOption;
-    this.orderOption = data.orderOption;
-    this.filterOption = data.filterOption;
-    this.sortTasks(data);
+    if (!data) return;
+    this.sortingOptions.sortOption = data.sortOption;
+    this.sortingOptions.orderOption = data.orderOption;
+    this.sortingOptions.filterOption = data.filterOption;
+    this._filterTasks.set(this.sortTasks(this.sortingOptions));
+  }
+
+  actionTask(data: any) {
+    const task: ITask = data[0];
+    const type: string = data[1];
+
+    this._tasks.update((tasks) => {
+      const index = tasks.findIndex((t) => t._id === task._id);
+      tasks.splice(index, 1);
+      return tasks;
+    });
+    this._filterTasks.set(this.sortTasks(this.sortingOptions));
+
+    if (type === 'complete') {
+      this.toastClass = 'toast-success';
+      this.toastMessage = 'Tarea completada';
+      this.toastIcon = 'checkmark-circle-outline';
+      this.isToastOpen = true;
+      this.taskService
+        .updateTask(task._id, { is_completed: true })
+        .subscribe(() => {
+          setTimeout(() => {
+            this.setOpen(false);
+          }, 2000);
+        });
+    } else {
+      this.toastClass = 'toast-delete';
+      this.toastMessage = 'Tarea eliminada';
+      this.toastIcon = 'close-circle-outline';
+      this.isToastOpen = true;
+      this.taskService.deleteTask(task._id).subscribe(() => {
+        setTimeout(() => {
+          this.setOpen(false);
+        }, 2000);
+      });
+    }
+  }
+
+  setOpen(isOpen: boolean) {
+    this.isToastOpen = isOpen;
   }
 }

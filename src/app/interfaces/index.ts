@@ -12,6 +12,8 @@ export interface ITask {
     description: string;
     idDate: string;
     deadline: string;
+    is_completed: boolean;
+    is_expired: boolean;
     priority: IPriority;
     user: User;
     createdAt: Date;
