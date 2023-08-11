@@ -37,13 +37,8 @@
 }
 
 ion-input {
-    --highlight-color: var(--ion-color-main);
-    --highlight-color-valid: var(--ion-color-main);
-    --highlight-color-focused: var(--ion-color-main);
-    --highlight-color-invalid: var(--ion-color-danger-tint);
-    --highlight-color-required: var(--ion-color-danger-tint);
-    border-bottom: 1px solid var(--ion-color-main);
-    --border-style: ;
+    --background: transparent !important;
+    --highlight-color-valid: var(--ion-color-primary);
     margin-top: 5px;
 }
 

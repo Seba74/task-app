@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://tasky-backend-7lgr-dev.fl0.io/api/v1',
+  apiUrl: 'http://192.168.0.16:3000/api/v1',
 };  
 
 /*

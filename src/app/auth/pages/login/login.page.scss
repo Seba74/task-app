@@ -18,7 +18,7 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    padding-top: 12rem;
+    padding-top: 6rem;
     .form-container {
         width: 100%;
         display: flex;
@@ -38,14 +38,9 @@
     }
 }
 
-ion-item {
-    --highlight-color-valid: var(--ion-color-main);
-    --padding-start: 0;
-    ion-input {
-        --highlight-color: var(--ion-color-main);
-    }
+ion-input {
+    --highlight-color-valid: var(--ion-color-primary);
 }
-
 
 .toast-error {
     --background: var(--ion-color-danger-tint);
