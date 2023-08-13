@@ -101,6 +101,8 @@ export class TasksViewComponent implements OnInit {
   });
 
   public tasksChanges = effect(() => {
+    console.log('tasksChanges', this.tasks());
+    
     if(this.tasks().length > 0) this.loading.dismiss();
   });
 

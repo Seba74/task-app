@@ -12,12 +12,14 @@ import { ITask } from 'src/app/interfaces';
   templateUrl: './items.component.html',
   styleUrls: ['./items.component.scss'],
 })
-export class ItemsComponent {
+export class ItemsComponent implements OnInit {
   @Input() tasks: ITask[] = [];
   @Output() taskToEdit: EventEmitter<ITask> = new EventEmitter();
   @Output() sendActionTask: EventEmitter<[ITask, string]> = new EventEmitter();
   
-  ionViewWillEnter(){}
+  ngOnInit(): void {
+    console.log(this.tasks);
+  }
 
   sendTaskToEdit(task: ITask) {
     this.taskToEdit.emit(task);

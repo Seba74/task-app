@@ -10,18 +10,19 @@ import { ItemsComponent } from './items/items.component';
 import { ItemComponent } from './item/item.component';
 import { TaskOptionsComponent } from './task-options/task-options.component';
 import { SelectOptionsComponent } from './select-options/select-options.component';
+import { AccordionTasksComponent } from './accordion-tasks/accordion-tasks.component';
 
 
 
 
 @NgModule({
-  declarations: [CalendarComponent, AddTaskComponent, TasksViewComponent, ItemsComponent, ItemComponent, TaskOptionsComponent, SelectOptionsComponent],
+  declarations: [CalendarComponent, AddTaskComponent, TasksViewComponent, ItemsComponent, ItemComponent, TaskOptionsComponent, SelectOptionsComponent, AccordionTasksComponent],
   imports: [
     CommonModule,
     IonicModule,
     ReactiveFormsModule,
     MatSelectModule,
   ],
-  exports: [CalendarComponent]
+  exports: [CalendarComponent, AccordionTasksComponent]
 })
 export class ComponentsModule { }

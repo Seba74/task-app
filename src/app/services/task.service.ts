@@ -19,6 +19,15 @@ export class TaskService {
   //   private _tasks = signal<ITask | null>(null);
   //   public tasks = computed(() => this._tasks());
 
+  public getNoCompletedTasksByUser(): Observable<ITask[]> {
+    const idUser = this.AuthService.currentUser()?._id;
+    const headers = { Authorization: `Bearer ${this.AuthService.token()}` };
+    const taskApi: string = `${this.apiUrl}/user/${idUser}`;
+    return this.http.get<DataResponse>(taskApi, { headers }).pipe(map((response) => {
+      return response.data.filter((task: ITask) => !task.is_completed);
+    }));
+  }
+
   public getUserTasksByDate(idDate: string): Observable<ITask[]> {
     const idUser = this.AuthService.currentUser()?._id;
     const headers = { Authorization: `Bearer ${this.AuthService.token()}` };

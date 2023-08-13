@@ -1,47 +1,50 @@
-<div class="main-container relative" #container>
+<ion-content [fullscreen]="true">
+  <div class="main-container relative" #container>
+    <div class="drag-line"></div>
 
-  <div class="drag-line"></div>
+    <div class="title-content">
+      <h1 class="text-xl font-semibold">{{ title() }}</h1>
 
-  <div class="title-content">
-    <h1 class="text-xl font-semibold">{{ title() }}</h1>
+      <ion-button fill="clear" (click)="showOptions()">
+        <ion-icon slot="icon-only" name="options-outline"></ion-icon>
+      </ion-button>
+    </div>
 
-    <ion-button fill="clear" (click)="showOptions()">
-      <ion-icon slot="icon-only" name="options-outline"></ion-icon>
-    </ion-button>
-  </div>
-
-  <div class="tasks-content flex-col overflow-y-scroll">
-    <app-items
-      class="w-full"
-      [tasks]="filterTasks()"
-      (taskToEdit)="addView($event)"
-      (sendActionTask)="actionTask($event)"
-    ></app-items>
-    <div class="tasks-empty" *ngIf="emptyTasks()">
-      <div class="tasks-empty-content w-full text-center">
-        <h2 class="text-md font-semibold">No hay ningúna tarea prevista aún</h2>
+    <div class="tasks-content flex-col">
+      <app-items
+        class="w-full"
+        [tasks]="filterTasks()"
+        (taskToEdit)="addView($event)"
+        (sendActionTask)="actionTask($event)"
+      ></app-items>
+      <div class="tasks-empty" *ngIf="emptyTasks()">
+        <div class="tasks-empty-content w-full text-center">
+          <h2 class="text-md font-semibold">
+            No hay ningúna tarea prevista aún
+          </h2>
+        </div>
       </div>
     </div>
-  </div>
 
-  <ion-footer>
-    <div class="add-section">
-      <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-        <ion-fab-button size="small" (click)="addView()">
-          <ion-icon name="add"></ion-icon>
-        </ion-fab-button>
-      </ion-fab>
-    </div>
-  </ion-footer>
-</div>
+    <ion-footer>
+      <div class="add-section">
+        <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+          <ion-fab-button size="small" (click)="addView()">
+            <ion-icon name="add"></ion-icon>
+          </ion-fab-button>
+        </ion-fab>
+      </div>
+    </ion-footer>
+  </div>
+</ion-content>
 
 <ion-toast
-    [isOpen]="isToastOpen"
-    [message]="toastMessage"
-    [duration]="2000"
-    [cssClass]="toastClass"
-    [icon]="toastIcon"
-    [position]="'bottom'"
-    [mode]="'ios'"
-    (didDismiss)="setOpen(false)"
-  ></ion-toast>
+  [isOpen]="isToastOpen"
+  [message]="toastMessage"
+  [duration]="2000"
+  [cssClass]="toastClass"
+  [icon]="toastIcon"
+  [position]="'bottom'"
+  [mode]="'ios'"
+  (didDismiss)="setOpen(false)"
+></ion-toast>

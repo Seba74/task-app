@@ -1,5 +1,9 @@
 <ion-list>
   <ion-item-sliding *ngFor="let task of tasks">
-    <app-item [task]="task" (taskToEdit)="sendTaskToEdit($event)" (sendActionTask)="actionTask($event)"></app-item>
-  </ion-item-sliding>    
+    <app-item
+      [task]="task"
+      (taskToEdit)="sendTaskToEdit($event)"
+      (sendActionTask)="actionTask($event)"
+    ></app-item>
+  </ion-item-sliding>
 </ion-list>
