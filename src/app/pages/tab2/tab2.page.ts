@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { IonicModule, LoadingController } from '@ionic/angular';
 import { ComponentsModule } from 'src/app/components/components.module';
-import { ITask } from 'src/app/interfaces';
+import { LoadingService } from 'src/app/services/loading.service';
 import { TaskService } from 'src/app/services/task.service';
 
 @Component({
@@ -15,60 +15,37 @@ import { TaskService } from 'src/app/services/task.service';
 export class Tab2Page {
   public title: string = 'Pendientes';
   private taskService: TaskService = inject(TaskService);
-  private _tasks = signal<ITask[]>([]);
-  public tasks = computed(() => this._tasks());
-  public datesWithTasks: string[] = [];
+
+  public tasks = computed(() => this.taskService.allTasks());
   public datesWithTasksGrouped: any = [];
 
-  private loadingController = inject(LoadingController);
-  public loading!: HTMLIonLoadingElement;
+  private loadingService = inject(LoadingService);
 
   public tasksReadyEffect = effect(() => {
-    if (this.tasks().length > 0) {
-      this.datesWithTasks = this.tasks()
-        .map((task: ITask) => task.idDate)
-        .filter((value, index, self) => self.indexOf(value) === index)
-        .sort();
-
-      this.datesWithTasksGrouped = this.groupTasksByDate();
-      console.log(this.datesWithTasksGrouped);
-      this.loading.dismiss();
-    }
-
-    console.log('tasksReadyEffect');
-
+    this.datesWithTasksGrouped = this.groupTasksByDate();
   });
 
   ngOnInit() {
-    this.showLoading();
-    this.taskService.getNoCompletedTasksByUser().subscribe((tasks: ITask[]) => {
-      this._tasks.set(tasks);
-      if (this.tasks().length === 0) this.loading.dismiss();
-    });
-  }
-
-  getTasksByDate(date: string) {
-    return this.tasks().filter((task: ITask) => task.idDate === date);
+    if (this.datesWithTasksGrouped.length === 0) {
+      this.loadingService.showLoading();
+      this.taskService.getNoCompletedTasksByUser().subscribe(() => {
+        this.loadingService.dismissLoading();
+      });
+    }
   }
 
   groupTasksByDate() {
-    const groupTasks: any = [];
-    this.datesWithTasks.forEach((date: string) => {
-      groupTasks.push({
-        date: date,
-        tasks: this.getTasksByDate(date),
-      });
-    });
-    return groupTasks;
-  }
+    const groupTasks = [];
+    for (const date in this.tasks()) {
+      if (this.tasks()[date].length > 0) {
+        groupTasks.push({ date, tasks: this.tasks()[date] });
+      }
+    }
 
-  async showLoading() {
-    this.loading = await this.loadingController.create({
-      mode: 'ios',
-      cssClass: 'tasks-loading',
-      translucent: true,
-      showBackdrop: true,
+    groupTasks.sort((a, b) => {
+      return a.date > b.date ? 1 : -1;
     });
-    this.loading.present();
+
+    return groupTasks;
   }
 }

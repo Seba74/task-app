@@ -18,7 +18,6 @@ export class ItemsComponent implements OnInit {
   @Output() sendActionTask: EventEmitter<[ITask, string]> = new EventEmitter();
   
   ngOnInit(): void {
-    console.log(this.tasks);
   }
 
   sendTaskToEdit(task: ITask) {

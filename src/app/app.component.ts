@@ -1,8 +1,16 @@
-import {Component,EnvironmentInjector,computed,effect,inject} from '@angular/core';
+import {
+  Component,
+  EnvironmentInjector,
+  computed,
+  effect,
+  inject,
+} from '@angular/core';
 import { IonicModule, LoadingController, NavController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './auth/services/auth.service';
 import { AuthStatus } from './auth/interfaces';
+import { TaskService } from './services/task.service';
+import { PriorityService } from './services/priority.service';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -12,6 +20,8 @@ import { AuthStatus } from './auth/interfaces';
 })
 export class AppComponent {
   private authService = inject(AuthService);
+  private taskService = inject(TaskService);
+  private priorityService = inject(PriorityService);
   private navController = inject(NavController);
   public environmentInjector = inject(EnvironmentInjector);
   public loadingController = inject(LoadingController);
@@ -29,6 +39,10 @@ export class AppComponent {
 
   public authStatusChangedEffect = effect(async () => {
     if (this.authIsChecked()) {
+      if (this.authService.authStatus() === AuthStatus.authenticated) {
+        await this.taskService.getTasksFromStorage();
+        await this.priorityService.getPrioritiesFromStorage();
+      }
       await this.loadingController.dismiss();
     }
   });

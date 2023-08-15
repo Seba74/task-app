@@ -21,3 +21,11 @@ ion-item-options {
 .desc-label {
     white-space: normal;
 }
+
+.add-button {
+    background-color: var(--ion-color-main-bg);
+}
+
+.remove-button{
+    background-color: var(--ion-color-danger-bg);
+}

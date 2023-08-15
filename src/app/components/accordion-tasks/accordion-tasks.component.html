@@ -3,6 +3,17 @@
     <ion-label class="text-lg">{{ title() }}</ion-label>
   </ion-item>
   <div slot="content">
-    <app-items [tasks]="data.tasks"></app-items>
+    <app-items [tasks]="data.tasks" (sendActionTask)="actionTask($event)"></app-items>
   </div>
 </ion-accordion>
+
+<ion-toast
+  [isOpen]="isToastOpen"
+  [message]="toastMessage"
+  [duration]="2000"
+  [cssClass]="toastClass"
+  [icon]="toastIcon"
+  [position]="'bottom'"
+  [mode]="'ios'"
+  (didDismiss)="setOpen(false)"
+></ion-toast>

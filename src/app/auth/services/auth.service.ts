@@ -18,7 +18,8 @@ import {
   AuthTokenStatus,
 } from '../interfaces/index';
 import { Storage } from '@ionic/storage-angular';
-import { LoadingController, NavController } from '@ionic/angular';
+import { NavController } from '@ionic/angular';
+import { LoadingService } from 'src/app/services/loading.service';
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +27,7 @@ import { LoadingController, NavController } from '@ionic/angular';
 export class AuthService {
   private readonly apiUrl: string = environment.apiUrl;
   private http = inject(HttpClient);
+  private loadingService = inject(LoadingService);
   private navController = inject(NavController);
   private storage = inject(Storage);
 
@@ -37,22 +39,12 @@ export class AuthService {
   public currentUser = computed(() => this._currentUser());
   public authStatus = computed(() => this._authStatus());
   public token = computed(() => this._token());
-  public loadingController = inject(LoadingController);
   
   constructor() {
-    this.showLoading().finally(() => {
+    this.loadingService.showLoading().finally(() => {
       this.validateToken().subscribe();
     });
     this.storage.create()
-  }
-
-  async showLoading() {
-    const loading = await this.loadingController.create({
-      mode: 'ios',
-      spinner: 'dots',
-      cssClass: 'custom-loading',
-    });
-    loading.present();
   }
 
   login(email: string, password: string): Observable<boolean> {
@@ -65,16 +57,16 @@ export class AuthService {
       })
     };
 
-    this.showLoading();
+    this.loadingService.showLoading();
     return this.http.post<AuthResponse>(apiLogin, body, httpOptions).pipe(
       tap(({ user, token }) => {
-        this.loadingController.dismiss();
+        this.loadingService.dismissLoading();
         return from(this.saveTokenAndUpdateSignals(token, user));
       }),
       map(() => true),
       
       catchError((err) => {
-        this.loadingController.dismiss();
+        this.loadingService.dismissLoading();
         return throwError(err.error);
       })
     );

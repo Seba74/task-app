@@ -7,7 +7,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { LoadingController, ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { AddTaskComponent } from '../add-task/add-task.component';
 import { Keyboard, KeyboardPlugin } from '@capacitor/keyboard';
 import { ICreateTask, IPriority, ITask } from 'src/app/interfaces';
@@ -19,6 +19,7 @@ import { forkJoin } from 'rxjs';
 import { utcToZonedTime, format } from 'date-fns-tz';
 import { TaskOptionsComponent } from '../task-options/task-options.component';
 import { Capacitor } from '@capacitor/core';
+import { LoadingService } from 'src/app/services/loading.service';
 
 @Component({
   selector: 'app-tasks-view',
@@ -34,29 +35,36 @@ export class TasksViewComponent implements OnInit {
     orderOption: { value: 'asc', label: 'Ascendente' },
   };
 
+  private loadingService = inject(LoadingService);
   private modalController = inject(ModalController);
-  private loadingController = inject(LoadingController);
   private taskService = inject(TaskService);
   private authService = inject(AuthService);
   private priorityService = inject(PriorityService);
 
   private addModal!: HTMLIonModalElement;
 
-  public loading!: HTMLIonLoadingElement;
-  public priorities: IPriority[] = [];
-
   public isToastOpen: boolean = false;
   public toastMessage: string = '';
   public toastIcon: string = '';
   public toastClass: string = '';
 
-  private _tasks = signal<ITask[]>([]);
-  public tasks = computed<ITask[]>(() => this._tasks());
-
+  // private _tasks = signal<ITask[]>([]);
+  public tasks = computed<ITask[]>(
+    () => this.taskService.allTasks()[this.idDate]
+  );
+  public priorities = computed<IPriority[]>(() =>
+    this.priorityService.priorities()
+  );
+  
   private _filterTasks = signal<ITask[]>([]);
   public filterTasks = computed<ITask[]>(() => this._filterTasks());
 
-  public emptyTasks = computed<boolean>(() => this.filterTasks().length === 0);
+  public emptyTasks = computed<boolean>(() => {
+    if(this.tasks()){
+      return this.filterTasks().length === 0;
+    }
+    return true;
+  });
 
   private _user = signal<User | null>(this.authService.currentUser());
   public user = computed<User | null>(() => this._user());
@@ -100,23 +108,18 @@ export class TasksViewComponent implements OnInit {
     return `${dateArray[2]} de ${capitalizedMonth} de ${year}`;
   });
 
-  public tasksChanges = effect(() => {
-    console.log('tasksChanges', this.tasks());
-    
-    if(this.tasks().length > 0) this.loading.dismiss();
-  });
-
   ngOnInit() {
-    this.showLoading();
-    forkJoin([
-      this.priorityService.getAllPriorities(),
-      this.taskService.getNoCompletedTasksByDate(this.idDate),
-    ]).subscribe(([priorities, tasks]) => {
-      if(tasks.length === 0) this.loading.dismiss();
-      this._tasks.set(tasks);
-      this._filterTasks.set(this.sortTasks(this.sortingOptions));
-      this.priorities = priorities;
-    });
+    if (!this.tasks()) {
+      this.loadingService.showLoading();
+      forkJoin([
+        this.priorityService.getAllPriorities(),
+        this.taskService.getNoCompletedTasksByDate(this.idDate),
+      ]).subscribe(() => {
+        this.loadingService.dismissLoading();
+      });
+    }else{
+      this._filterTasks.set(this.tasks());
+    }
   }
 
   async addView(task?: ITask) {
@@ -125,7 +128,7 @@ export class TasksViewComponent implements OnInit {
     const data = await this.presentAddModal(task);
 
     if (data) {
-      await this.showLoading();
+      await this.loadingService.showLoading();
       if (!task) {
         await this.createTask(data);
       } else {
@@ -137,7 +140,7 @@ export class TasksViewComponent implements OnInit {
   private async presentAddModal(task?: ITask): Promise<any> {
     this.addModal = await this.modalController.create({
       component: AddTaskComponent,
-      componentProps: { priorities: this.priorities, task: task },
+      componentProps: { priorities: this.priorities(), task: task },
       cssClass: 'add-task-modal',
       animated: true,
       backdropDismiss: true,
@@ -155,36 +158,30 @@ export class TasksViewComponent implements OnInit {
   }
 
   private async createTask(data: any) {
-        const task: ICreateTask = {
-          title: data.title,
-          description: data.description,
-          idDate: this.idDate,
-          deadline: data.deadline,
-          idPriority: data.idPriority,
-          idUser: this.user()!._id,
-        };
-        this.taskService.createTask(task).subscribe((t) => {
-          this._tasks.update((tasks) => [...tasks, t]);
-          this._filterTasks.set(this.sortTasks(this.sortingOptions));
-          this.loading.dismiss();
-        });
+    const task: ICreateTask = {
+      title: data.title,
+      description: data.description,
+      idDate: this.idDate,
+      deadline: data.deadline,
+      idPriority: data.idPriority,
+      idUser: this.user()!._id,
+    };
+    this.taskService.createTask(task).subscribe(() => {
+      this.sortTasks(this.sortingOptions)
+      this.loadingService.dismissLoading();
+    });
   }
 
   private async updateTask(task: ITask, data: any) {
-    this.taskService.updateTask(task._id, data).subscribe((t) => {
-      this._tasks.update((tasks) => {
-        const index = tasks.findIndex((t) => t._id === task._id);
-        tasks[index] = t;
-        return tasks;
-      });
-      this._filterTasks.set(this.sortTasks(this.sortingOptions));
-      this.loading.dismiss();
+    this.taskService.updateTask(task._id, data).subscribe(() => {
+      this.sortTasks(this.sortingOptions)
+      this.loadingService.dismissLoading();
     });
   }
 
   public sortTasks(data: any) {
     const { filterOption, orderOption, sortOption } = data;
-    let filteredTasks = this.tasks();
+    let filteredTasks: ITask[] = this.tasks();   
 
     if (filterOption.value !== 0) {
       filteredTasks = filteredTasks.filter(
@@ -208,7 +205,7 @@ export class TasksViewComponent implements OnInit {
       filteredTasks.reverse();
     }
 
-    return filteredTasks;
+    this._filterTasks.set(filteredTasks);
   }
 
   getTimeFromDate(date: string) {
@@ -216,16 +213,6 @@ export class TasksViewComponent implements OnInit {
     return format(localDate, 'HH:mm', {
       timeZone: 'America/Argentina/Buenos_Aires',
     });
-  }
-
-  async showLoading() {
-    this.loading = await this.loadingController.create({
-      mode: 'ios',
-      cssClass: 'tasks-loading',
-      translucent: true,
-      showBackdrop: true,
-    });
-    this.loading.present();
   }
 
   async showOptions() {
@@ -253,19 +240,14 @@ export class TasksViewComponent implements OnInit {
     this.sortingOptions.sortOption = data.sortOption;
     this.sortingOptions.orderOption = data.orderOption;
     this.sortingOptions.filterOption = data.filterOption;
-    this._filterTasks.set(this.sortTasks(this.sortingOptions));
+
+    this.sortTasks(data);
   }
 
   actionTask(data: any) {
+    this.loadingService.showLoading();
     const task: ITask = data[0];
     const type: string = data[1];
-
-    this._tasks.update((tasks) => {
-      const index = tasks.findIndex((t) => t._id === task._id);
-      tasks.splice(index, 1);
-      return tasks;
-    });
-    this._filterTasks.set(this.sortTasks(this.sortingOptions));
 
     if (type === 'complete') {
       this.toastIcon = 'checkmark-circle-outline';
@@ -275,6 +257,7 @@ export class TasksViewComponent implements OnInit {
       this.taskService
         .updateTask(task._id, { is_completed: true })
         .subscribe(() => {
+          this.loadingService.dismissLoading();
           setTimeout(() => {
             this.setOpen(false);
           }, 2000);
@@ -285,6 +268,7 @@ export class TasksViewComponent implements OnInit {
       this.toastMessage = 'Tarea eliminada';
       this.isToastOpen = true;
       this.taskService.deleteTask(task._id).subscribe(() => {
+        this.loadingService.dismissLoading();
         setTimeout(() => {
           this.setOpen(false);
         }, 2000);
