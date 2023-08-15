@@ -258,9 +258,7 @@ export class TasksViewComponent implements OnInit {
         .updateTask(task._id, { is_completed: true })
         .subscribe(() => {
           this.loadingService.dismissLoading();
-          setTimeout(() => {
             this.setOpen(false);
-          }, 2000);
         });
     } else {
       this.toastIcon = 'close-circle-outline';
@@ -269,9 +267,7 @@ export class TasksViewComponent implements OnInit {
       this.isToastOpen = true;
       this.taskService.deleteTask(task._id).subscribe(() => {
         this.loadingService.dismissLoading();
-        setTimeout(() => {
           this.setOpen(false);
-        }, 2000);
       });
     }
   }

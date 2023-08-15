@@ -1,4 +1,12 @@
-import { Component, Input, OnInit, computed, effect, inject, signal } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ITask } from 'src/app/interfaces';
@@ -10,8 +18,7 @@ import { TaskService } from 'src/app/services/task.service';
   templateUrl: './accordion-tasks.component.html',
   styleUrls: ['./accordion-tasks.component.scss'],
 })
-export class AccordionTasksComponent  implements OnInit {
-
+export class AccordionTasksComponent implements OnInit {
   @Input() data: any = {};
   private taskService: TaskService = inject(TaskService);
   private loadingService: LoadingService = inject(LoadingService);
@@ -28,7 +35,7 @@ export class AccordionTasksComponent  implements OnInit {
       return 'Hoy';
     }
 
-    return format(date, 'd \'de\' MMMM', { locale: es });
+    return format(date, "d 'de' MMMM", { locale: es });
   });
   private _tasks = signal<ITask[]>([]);
   public tasks = computed(() => this._tasks());
@@ -49,9 +56,7 @@ export class AccordionTasksComponent  implements OnInit {
         .updateTask(task._id, { is_completed: true })
         .subscribe(() => {
           this.loadingService.dismissLoading();
-          setTimeout(() => {
-            this.setOpen(false);
-          }, 2000);
+          this.setOpen(false);
         });
     } else {
       this.toastIcon = 'close-circle-outline';
@@ -60,9 +65,7 @@ export class AccordionTasksComponent  implements OnInit {
       this.isToastOpen = true;
       this.taskService.deleteTask(task._id).subscribe(() => {
         this.loadingService.dismissLoading();
-        setTimeout(() => {
-          this.setOpen(false);
-        }, 2000);
+        this.setOpen(false);
       });
     }
   }
@@ -71,7 +74,5 @@ export class AccordionTasksComponent  implements OnInit {
     this.isToastOpen = isOpen;
   }
 
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }

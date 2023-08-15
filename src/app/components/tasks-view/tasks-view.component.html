@@ -37,3 +37,13 @@
     </ion-footer>
   </div>
 </ion-content>
+
+<ion-toast
+  [isOpen]="isToastOpen"
+  [message]="toastMessage"
+  [cssClass]="toastClass"
+  [icon]="toastIcon"
+  [position]="'bottom'"
+  [mode]="'ios'"
+  (didDismiss)="setOpen(false)"
+></ion-toast>

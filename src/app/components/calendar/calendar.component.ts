@@ -50,7 +50,6 @@ export class CalendarComponent implements OnInit {
       componentProps: { idDate: this.date },
       cssClass: 'custom-modal',
       animated: true,
-      mode: 'ios',
       backdropDismiss: true,
       backdropBreakpoint: 0,
       breakpoints: [0, 1],
